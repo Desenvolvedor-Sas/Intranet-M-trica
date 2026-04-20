@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --brand-500: #3380ff;
+  --brand-600: #1a5ff5;
+  --surface-0: #0a0e1a;
+  --surface-50: #0f1425;
+  --surface-100: #151b30;
+  --surface-200: #1c2440;
+  --surface-300: #263055;
+  --surface-400: #354470;
+  --surface-500: #4a5a8a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--surface-0);
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+#root { min-height: 100vh; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-50); }
+::-webkit-scrollbar-thumb { background: var(--surface-400); border-radius: 3px; }
+
+input, textarea, select, button { font-family: 'Outfit', sans-serif; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+.animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
