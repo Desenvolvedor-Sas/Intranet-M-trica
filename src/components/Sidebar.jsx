@@ -8,6 +8,7 @@ import {
   Users,
   LogOut,
   ChevronRight,
+  X,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -26,14 +27,15 @@ function LogoMark() {
 }
 
 // ── Single navigation item ─────────────────────────────────────────────────────
-function NavItem({ to, icon: Icon, label, end = false }) {
+function NavItem({ to, icon: Icon, label, end = false, onClose }) {
   return (
     <NavLink
       to={to}
       end={end}
+      onClick={onClose}
       className={({ isActive }) =>
         [
-          'group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium',
+          'group flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium',
           'transition-all duration-150 relative',
           isActive
             ? 'text-white'
@@ -116,14 +118,14 @@ export default function Sidebar({ isOpen, onClose }) {
           isOpen ? 'translate-x-0' : '-translate-x-full',
         ].join(' ')}
         style={{
-          width: '256px',
+          width: 'min(85vw, 300px)',
           background: 'var(--surface-50)',
           borderRight: '1px solid var(--surface-200)',
         }}
       >
         {/* ── Brand header ── */}
         <div
-          className="flex items-center gap-3 px-4 py-6 shrink-0"
+          className="flex items-center gap-3 px-4 py-6 shrink-0 relative"
           style={{ borderBottom: '1px solid var(--surface-200)' }}
         >
           <LogoMark />
@@ -138,6 +140,18 @@ export default function Sidebar({ isOpen, onClose }) {
               Consultoria, Assessoria e Gestão
             </span>
           </div>
+
+          {/* ── Close X button (mobile only) ── */}
+          <button
+            onClick={onClose}
+            className="md:hidden absolute top-4 right-4 p-2 rounded-lg transition-colors"
+            style={{ color: 'var(--surface-500)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--surface-500)')}
+            aria-label="Fechar menu"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* ── Navigation ── */}
@@ -145,16 +159,16 @@ export default function Sidebar({ isOpen, onClose }) {
           <SectionLabel>Principal</SectionLabel>
 
           <div className="mt-1 mb-3 flex flex-col gap-0.5">
-            <NavItem to="/" icon={LayoutDashboard} label="Dashboard" end />
-            <NavItem to="/agenda" icon={Calendar} label="Agenda" />
-            <NavItem to="/projetos" icon={Kanban} label="Projetos" />
-            <NavItem to="/chat" icon={MessageCircle} label="Chat" />
+            <NavItem to="/" icon={LayoutDashboard} label="Dashboard" end onClose={onClose} />
+            <NavItem to="/agenda" icon={Calendar} label="Agenda" onClose={onClose} />
+            <NavItem to="/projetos" icon={Kanban} label="Projetos" onClose={onClose} />
+            <NavItem to="/chat" icon={MessageCircle} label="Chat" onClose={onClose} />
           </div>
 
           <SectionLabel>Ferramentas</SectionLabel>
 
           <div className="mt-1 mb-3 flex flex-col gap-0.5">
-            <NavItem to="/metrica-ia" icon={Bot} label="Métrica IA" />
+            <NavItem to="/metrica-ia" icon={Bot} label="Métrica IA" onClose={onClose} />
           </div>
 
           {/* Admin-only section */}
@@ -162,7 +176,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <>
               <SectionLabel>Administração</SectionLabel>
               <div className="mt-1 flex flex-col gap-0.5">
-                <NavItem to="/usuarios" icon={Users} label="Usuários" />
+                <NavItem to="/usuarios" icon={Users} label="Usuários" onClose={onClose} />
               </div>
             </>
           )}
@@ -174,7 +188,7 @@ export default function Sidebar({ isOpen, onClose }) {
           style={{ borderTop: '1px solid var(--surface-200)' }}
         >
           <div
-            className="flex items-center gap-3 px-2 py-2.5 rounded-lg mb-1"
+            className="flex items-center gap-3 px-2 py-3 rounded-lg mb-1"
             style={{ background: 'var(--surface-100)' }}
           >
             {/* Avatar */}
@@ -182,12 +196,12 @@ export default function Sidebar({ isOpen, onClose }) {
               <img
                 src={userData.avatar}
                 alt={userData.name}
-                className="w-8 h-8 rounded-full object-cover shrink-0"
+                className="w-10 h-10 rounded-full object-cover shrink-0"
                 style={{ border: '2px solid var(--surface-300)' }}
               />
             ) : (
               <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 select-none"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 select-none"
                 style={{
                   background:
                     'linear-gradient(135deg, var(--brand-500), var(--brand-600))',
@@ -215,7 +229,7 @@ export default function Sidebar({ isOpen, onClose }) {
           {/* Logout button */}
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer"
+            className="w-full flex items-center gap-2.5 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer"
             style={{ color: 'var(--surface-500)' }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(255,80,80,0.08)'

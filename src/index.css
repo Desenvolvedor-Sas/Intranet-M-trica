@@ -42,3 +42,23 @@ input, textarea, select, button { font-family: 'Outfit', sans-serif; }
 
 .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
 .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+
+@media (max-width: 640px) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+
+  .animate-fade-in {
+    animation-duration: 0.2s;
+  }
+}
+
+/* Bottom safe area for fixed elements */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

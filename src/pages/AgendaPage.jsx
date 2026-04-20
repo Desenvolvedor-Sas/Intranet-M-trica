@@ -109,7 +109,7 @@ function EventCard({ event, users, compareColor, onCancel }) {
         border: `1px solid #1c2440`,
         borderLeft: `4px solid ${dotColor}`,
         borderRadius: 10,
-        padding: '12px 14px',
+        padding: '14px 14px',
         marginBottom: 10,
       }}
     >
@@ -282,7 +282,7 @@ function AddEventModal({ onClose, selectedDate, users, currentUser }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
       style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
@@ -290,12 +290,13 @@ function AddEventModal({ onClose, selectedDate, users, currentUser }) {
         style={{
           backgroundColor: '#151b30',
           border: '1px solid #1c2440',
-          borderRadius: 16,
+          borderRadius: '16px 16px 0 0',
           width: '100%',
-          maxWidth: 520,
-          maxHeight: '90vh',
+          maxWidth: '100%',
+          maxHeight: '95vh',
           overflowY: 'auto',
         }}
+        className="sm:rounded-2xl sm:max-w-[520px]"
       >
         {/* Header */}
         <div
@@ -638,7 +639,7 @@ export default function AgendaPage() {
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 min-h-[44px]"
           style={{ backgroundColor: '#3380ff', color: '#fff' }}
         >
           <Plus size={16} />
@@ -648,16 +649,18 @@ export default function AgendaPage() {
 
       {/* ── Filters ── */}
       <div
-        className="flex flex-wrap items-center gap-3 mb-6 p-4 rounded-xl"
+        className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-3 mb-6 p-4 rounded-xl"
         style={{ backgroundColor: '#151b30', border: '1px solid #1c2440' }}
       >
-        <Filter size={15} color="#8a9cc5" />
-        <span className="text-xs font-medium mr-1" style={{ color: '#8a9cc5' }}>Visualizar:</span>
+        <div className="flex items-center gap-2">
+          <Filter size={15} color="#8a9cc5" />
+          <span className="text-xs font-medium" style={{ color: '#8a9cc5' }}>Visualizar:</span>
+        </div>
 
         {/* Minha Agenda */}
         <button
           onClick={() => setFilterMode(filterMode === 'mine' ? 'geral' : 'mine')}
-          className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+          className="w-full sm:w-auto px-3 py-2.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all min-h-[44px] sm:min-h-0"
           style={{
             backgroundColor: filterMode === 'mine' ? 'rgba(51,128,255,0.2)' : '#1c2440',
             border: `1px solid ${filterMode === 'mine' ? '#3380ff' : '#2a3350'}`,
@@ -670,7 +673,7 @@ export default function AgendaPage() {
         {/* Ver Geral */}
         <button
           onClick={() => setFilterMode('geral')}
-          className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
+          className="w-full sm:w-auto px-3 py-2.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all min-h-[44px] sm:min-h-0"
           style={{
             backgroundColor: filterMode === 'geral' ? 'rgba(34,197,94,0.15)' : '#1c2440',
             border: `1px solid ${filterMode === 'geral' ? '#22c55e' : '#2a3350'}`,
@@ -681,7 +684,7 @@ export default function AgendaPage() {
         </button>
 
         {/* Comparar com colega */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           <span className="text-xs" style={{ color: '#8a9cc5' }}>Comparar com colega:</span>
           <select
             value={compareUserId}
@@ -690,7 +693,7 @@ export default function AgendaPage() {
               if (e.target.value) setFilterMode('compare')
               else if (filterMode === 'compare') setFilterMode('geral')
             }}
-            className="rounded-lg px-2.5 py-1.5 text-xs text-white outline-none"
+            className="w-full sm:w-auto rounded-lg px-2.5 py-2.5 sm:py-1.5 text-xs text-white outline-none min-h-[44px] sm:min-h-0"
             style={{
               backgroundColor: '#0e1323',
               border: `1px solid ${filterMode === 'compare' ? '#f97316' : '#2a3350'}`,
@@ -708,7 +711,7 @@ export default function AgendaPage() {
 
         {/* Compare legend */}
         {filterMode === 'compare' && compareUser && (
-          <div className="flex items-center gap-3 ml-2">
+          <div className="flex items-center gap-3 sm:ml-2 flex-wrap">
             <div className="flex items-center gap-1.5">
               <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: COMPARE_COLORS[0], display: 'inline-block' }} />
               <span className="text-xs" style={{ color: '#8a9cc5' }}>Eu</span>
@@ -726,7 +729,7 @@ export default function AgendaPage() {
 
         {/* Category legend */}
         {filterMode !== 'compare' && (
-          <div className="flex items-center gap-3 ml-auto flex-wrap">
+          <div className="flex items-center gap-3 sm:ml-auto flex-wrap">
             {Object.entries(CATEGORY_CONFIG).map(([key, cfg]) => (
               <div key={key} className="flex items-center gap-1.5">
                 <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: cfg.color, display: 'inline-block' }} />
@@ -794,8 +797,11 @@ export default function AgendaPage() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDay(day)}
-                  className="relative flex flex-col items-center rounded-xl py-1 sm:py-2 transition-all"
+                  className="relative flex flex-col items-center rounded-xl transition-all"
                   style={{
+                    minHeight: 40,
+                    paddingTop: 6,
+                    paddingBottom: 6,
                     backgroundColor: isSelected
                       ? '#3380ff'
                       : todayDay

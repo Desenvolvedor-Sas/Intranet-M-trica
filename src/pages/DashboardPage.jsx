@@ -185,7 +185,7 @@ function StatCard({ stat }) {
           <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px 0' }}>
             {stat.label}
           </p>
-          <p style={{ color: '#fff', fontSize: '32px', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em', margin: '0 0 6px 0' }}>
+          <p style={{ color: '#fff', fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em', margin: '0 0 6px 0' }}>
             {stat.value}
           </p>
           <p style={{ color: stat.deltaUp ? '#22c55e' : '#6b7280', fontSize: '11px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -392,10 +392,18 @@ function MiniCalendar() {
         </h2>
       </div>
 
-      {/* Weekday headers — with week-number column */}
-      <div style={{ display: 'grid', gridTemplateColumns: '20px repeat(7, 1fr)', marginBottom: '6px' }}>
+      {/* Weekday headers — with week-number column (hidden on mobile) */}
+      <div style={{ display: 'grid', gridTemplateColumns: '20px repeat(7, 1fr)', marginBottom: '6px' }} className="hidden md:grid">
         {/* week-# column header */}
         <div style={{ textAlign: 'center', color: '#2a3554', fontSize: '9px', fontWeight: 600, padding: '4px 0' }}>#</div>
+        {weekDays.map((d) => (
+          <div key={d} style={{ textAlign: 'center', color: '#4b5563', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', padding: '4px 0' }}>
+            {d.charAt(0)}
+          </div>
+        ))}
+      </div>
+      {/* Mobile weekday headers (no week number column) */}
+      <div className="grid md:hidden" style={{ gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: '6px' }}>
         {weekDays.map((d) => (
           <div key={d} style={{ textAlign: 'center', color: '#4b5563', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', padding: '4px 0' }}>
             {d.charAt(0)}
@@ -410,56 +418,76 @@ function MiniCalendar() {
           const firstReal = rowDays.find(Boolean)
           const weekNum = firstReal ? getISOWeek(firstReal) : ''
           return (
-            <div key={rowIndex} style={{ display: 'grid', gridTemplateColumns: '20px repeat(7, 1fr)', gap: '2px', alignItems: 'center' }}>
-              {/* Week number */}
-              <div style={{ textAlign: 'center', color: '#2a3554', fontSize: '9px', fontWeight: 600, lineHeight: '30px' }}>
-                {weekNum}
+            <div key={rowIndex}>
+              {/* Desktop row: week number + 7 days */}
+              <div className="hidden md:grid" style={{ gridTemplateColumns: '20px repeat(7, 1fr)', gap: '2px', alignItems: 'center' }}>
+                {/* Week number */}
+                <div style={{ textAlign: 'center', color: '#2a3554', fontSize: '9px', fontWeight: 600, lineHeight: '30px' }}>
+                  {weekNum}
+                </div>
+                {rowDays.map((day, colIndex) => {
+                  if (!day) return <div key={`blank-d-${rowIndex}-${colIndex}`} />
+                  const dayKey = day.toISOString()
+                  const dayNum = parseInt(format(day, 'd'), 10)
+                  const todayDay = isToday(day)
+                  const hasEvent = EVENT_DAYS.has(dayNum)
+                  const isHovered = hoveredDay === dayKey && !todayDay
+                  return (
+                    <div
+                      key={dayKey}
+                      onMouseEnter={() => setHoveredDay(dayKey)}
+                      onMouseLeave={() => setHoveredDay(null)}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        height: todayDay ? '34px' : '30px', width: todayDay ? '34px' : undefined,
+                        margin: todayDay ? 'auto' : undefined,
+                        borderRadius: '8px', fontSize: todayDay ? '12px' : '11px',
+                        fontWeight: todayDay ? 700 : isHovered ? 500 : 400, cursor: 'default',
+                        backgroundColor: todayDay ? '#3380ff' : isHovered ? 'rgba(51,128,255,0.12)' : 'transparent',
+                        color: todayDay ? '#fff' : isHovered ? '#a0bfff' : '#6b7280',
+                        boxShadow: todayDay ? '0 0 0 2px rgba(51,128,255,0.35), 0 0 16px rgba(51,128,255,0.5)' : 'none',
+                        transition: 'all 0.15s ease', position: 'relative', gap: '1px',
+                      }}
+                    >
+                      {format(day, 'd')}
+                      {hasEvent && !todayDay && (
+                        <div style={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#3380ff', position: 'absolute', bottom: 3 }} />
+                      )}
+                    </div>
+                  )
+                })}
               </div>
-              {rowDays.map((day, colIndex) => {
-                if (!day) return <div key={`blank-${rowIndex}-${colIndex}`} />
-                const dayKey = day.toISOString()
-                const dayNum = parseInt(format(day, 'd'), 10)
-                const todayDay = isToday(day)
-                const hasEvent = EVENT_DAYS.has(dayNum)
-                const isHovered = hoveredDay === dayKey && !todayDay
-                return (
-                  <div
-                    key={dayKey}
-                    onMouseEnter={() => setHoveredDay(dayKey)}
-                    onMouseLeave={() => setHoveredDay(null)}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: todayDay ? '34px' : '30px',
-                      width: todayDay ? '34px' : undefined,
-                      margin: todayDay ? 'auto' : undefined,
-                      borderRadius: '8px',
-                      fontSize: todayDay ? '12px' : '11px',
-                      fontWeight: todayDay ? 700 : isHovered ? 500 : 400,
-                      cursor: 'default',
-                      backgroundColor: todayDay
-                        ? '#3380ff'
-                        : isHovered
-                        ? 'rgba(51,128,255,0.12)'
-                        : 'transparent',
-                      color: todayDay ? '#fff' : isHovered ? '#a0bfff' : '#6b7280',
-                      boxShadow: todayDay
-                        ? '0 0 0 2px rgba(51,128,255,0.35), 0 0 16px rgba(51,128,255,0.5)'
-                        : 'none',
-                      transition: 'all 0.15s ease',
-                      position: 'relative',
-                      gap: '1px',
-                    }}
-                  >
-                    {format(day, 'd')}
-                    {hasEvent && !todayDay && (
-                      <div style={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#3380ff', position: 'absolute', bottom: 3 }} />
-                    )}
-                  </div>
-                )
-              })}
+              {/* Mobile row: 7 days only (no week number) */}
+              <div className="grid md:hidden" style={{ gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', alignItems: 'center' }}>
+                {rowDays.map((day, colIndex) => {
+                  if (!day) return <div key={`blank-m-${rowIndex}-${colIndex}`} />
+                  const dayKey = day.toISOString() + '-m'
+                  const dayNum = parseInt(format(day, 'd'), 10)
+                  const todayDay = isToday(day)
+                  const hasEvent = EVENT_DAYS.has(dayNum)
+                  return (
+                    <div
+                      key={dayKey}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        height: todayDay ? '34px' : '30px', width: todayDay ? '34px' : undefined,
+                        margin: todayDay ? 'auto' : undefined,
+                        borderRadius: '8px', fontSize: todayDay ? '12px' : '11px',
+                        fontWeight: todayDay ? 700 : 400, cursor: 'default',
+                        backgroundColor: todayDay ? '#3380ff' : 'transparent',
+                        color: todayDay ? '#fff' : '#6b7280',
+                        boxShadow: todayDay ? '0 0 0 2px rgba(51,128,255,0.35), 0 0 16px rgba(51,128,255,0.5)' : 'none',
+                        transition: 'all 0.15s ease', position: 'relative', gap: '1px',
+                      }}
+                    >
+                      {format(day, 'd')}
+                      {hasEvent && !todayDay && (
+                        <div style={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#3380ff', position: 'absolute', bottom: 3 }} />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )
         })}
@@ -516,7 +544,7 @@ function BarChart() {
 
       <div style={{ display: 'flex', gap: '16px' }}>
         {/* Y-axis labels */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '120px', paddingBottom: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '20px' }} className="bar-chart-area">
           {[...Y_TICKS].reverse().map((t) => (
             <span key={t} style={{ color: '#374151', fontSize: '10px', lineHeight: 1 }}>{t}</span>
           ))}
@@ -531,15 +559,15 @@ function BarChart() {
               top: 0,
               left: 0,
               right: 0,
-              height: '100px',
               borderRadius: '8px',
               background: 'linear-gradient(180deg, rgba(51,128,255,0.06) 0%, rgba(51,128,255,0.01) 100%)',
               pointerEvents: 'none',
             }}
+            className="bar-chart-area"
           />
 
           {/* Grid lines */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100px', pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, pointerEvents: 'none' }} className="bar-chart-area">
             {Y_TICKS.map((t) => (
               <div
                 key={t}
@@ -585,7 +613,7 @@ function BarChart() {
           </div>
 
           {/* Bars + labels */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', height: '100px' }}>
+          <div className="bar-chart-area" style={{ display: 'flex', alignItems: 'flex-end', gap: '5px' }}>
             {BAR_DATA.map((bar, i) => {
               const isActive = i === currentBarIndex
               const barVisible = visibleBars.includes(i)
@@ -1012,12 +1040,16 @@ export default function DashboardPage() {
             grid-column: span 2;
           }
         }
+        .bar-chart-area { height: 80px; }
+        @media (min-width: 768px) {
+          .bar-chart-area { height: 100px; }
+        }
       `}</style>
 
       {/* Page header */}
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
-          <h1 className="text-xl md:text-2xl lg:text-[26px]" style={{ color: '#fff', fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>
+          <h1 className="text-lg md:text-2xl lg:text-[26px]" style={{ color: '#fff', fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>
             {greeting}, {userName}
             <span style={{ color: '#3380ff' }}>.</span>
           </h1>
@@ -1033,8 +1065,15 @@ export default function DashboardPage() {
         <p style={{ color: '#4b5563', fontSize: '13px', margin: 0, textTransform: 'capitalize' }}>{todayStr}</p>
       </div>
 
-      {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px', marginBottom: '24px' }}>
+      {/* Stats row — horizontal scroll on mobile, grid on md+ */}
+      <div className="md:hidden flex overflow-x-auto gap-3 pb-2 mb-6" style={{ WebkitOverflowScrolling: 'touch' }}>
+        {STATS.map((s) => (
+          <div key={s.label} style={{ minWidth: 160, flexShrink: 0 }}>
+            <StatCard stat={s} />
+          </div>
+        ))}
+      </div>
+      <div className="hidden md:grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         {STATS.map((s) => (
           <StatCard key={s.label} stat={s} />
         ))}

@@ -84,9 +84,9 @@ function CadastrarModal({ onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl" style={{ background: '#151b30', border: '1px solid #1c2440' }}>
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl" style={{ background: '#151b30', border: '1px solid #1c2440', maxHeight: '95vh', overflowY: 'auto' }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -237,9 +237,9 @@ function EditarModal({ user, onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-      <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl" style={{ background: '#151b30', border: '1px solid #1c2440' }}>
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl" style={{ background: '#151b30', border: '1px solid #1c2440', maxHeight: '95vh', overflowY: 'auto' }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -340,9 +340,9 @@ function EditarModal({ user, onClose, onSuccess }) {
 // ---------- Modal de Confirmação de Exclusão ----------
 function ConfirmarDeleteModal({ user, onClose, onConfirm, loading }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-      <div className="w-full max-w-sm rounded-2xl p-6 shadow-2xl" style={{ background: '#151b30', border: '1px solid #1c2440' }}>
+      <div className="w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl" style={{ background: '#151b30', border: '1px solid #1c2440' }}>
         <div className="flex items-center gap-2 mb-4">
           <Trash2 className="text-red-400" size={20} />
           <h2 className="text-lg font-semibold text-white">Excluir Usuário</h2>
@@ -412,11 +412,11 @@ export default function UsuariosPage() {
   }
 
   return (
-    <div className="p-6 md:p-8 min-h-screen" style={{ color: '#e2e8f0' }}>
+    <div className="p-4 md:p-6 lg:p-8 min-h-screen" style={{ color: '#e2e8f0' }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
             <Shield className="text-indigo-400" size={24} />
             Gerenciamento de Usuários
           </h1>
@@ -426,7 +426,7 @@ export default function UsuariosPage() {
         </div>
         <button
           onClick={() => setShowCadastrar(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 active:scale-95 w-fit"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 active:scale-95 min-h-[44px]"
           style={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' }}>
           <Plus size={16} />
           Cadastrar Usuário
@@ -434,7 +434,7 @@ export default function UsuariosPage() {
       </div>
 
       {/* Search */}
-      <div className="relative mb-6 max-w-sm">
+      <div className="relative mb-6">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           value={search}
@@ -445,8 +445,72 @@ export default function UsuariosPage() {
         />
       </div>
 
-      {/* Table */}
-      <div className="rounded-2xl overflow-hidden shadow-xl" style={{ background: '#151b30', border: '1px solid #1c2440' }}>
+      {/* ── Mobile card layout (hidden on md+) ── */}
+      <div className="md:hidden flex flex-col gap-3">
+        {loadingUsers ? (
+          <div className="flex items-center justify-center py-20 gap-3 text-gray-400">
+            <Loader2 size={22} className="animate-spin text-indigo-400" />
+            <span className="text-sm">Carregando usuários...</span>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-gray-500">
+            <UserPlus size={36} className="text-gray-600" />
+            <p className="text-sm">{search ? 'Nenhum usuário encontrado.' : 'Nenhum usuário cadastrado.'}</p>
+          </div>
+        ) : (
+          filtered.map((user) => (
+            <div
+              key={user.id}
+              className="rounded-2xl p-4"
+              style={{ background: '#151b30', border: '1px solid #1c2440' }}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <Avatar name={user.name} />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-white text-sm truncate">{user.name || '—'}</p>
+                  <p className="text-xs text-gray-400 truncate flex items-center gap-1 mt-0.5">
+                    <Mail size={11} className="flex-shrink-0" />
+                    {user.email || '—'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${ROLE_COLORS[user.role] || 'bg-gray-500/20 text-gray-300 border border-gray-500/30'}`}>
+                  {user.role || '—'}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[user.status] || 'bg-gray-500/20 text-gray-300 border border-gray-500/30'}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${user.status === 'ativo' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                  {user.status ? user.status.charAt(0).toUpperCase() + user.status.slice(1) : '—'}
+                </span>
+                {user.department && (
+                  <span className="text-xs text-gray-400 px-2.5 py-1 rounded-full" style={{ background: '#1c2440' }}>
+                    {user.department}
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEditingUser(user)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-indigo-300 transition-colors min-h-[44px]"
+                  style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                  <Edit size={14} />
+                  Editar
+                </button>
+                <button
+                  onClick={() => setDeletingUser(user)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-red-300 transition-colors min-h-[44px]"
+                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                  <Trash2 size={14} />
+                  Excluir
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* ── Desktop table (hidden on mobile) ── */}
+      <div className="hidden md:block rounded-2xl overflow-hidden shadow-xl" style={{ background: '#151b30', border: '1px solid #1c2440' }}>
         {loadingUsers ? (
           <div className="flex items-center justify-center py-20 gap-3 text-gray-400">
             <Loader2 size={22} className="animate-spin text-indigo-400" />

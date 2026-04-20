@@ -169,27 +169,29 @@ function CardDetailModal({ task, users, projectId, onClose, onDeleted }) {
         inset: 0,
         background: 'rgba(0,0,0,0.75)',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         justifyContent: 'center',
         zIndex: 1100,
-        padding: 16,
+        padding: 0,
       }}
+      className="sm:items-center sm:p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
         style={{
           background: '#0f1629',
           border: '1px solid #1c2440',
-          borderRadius: 14,
+          borderRadius: '14px 14px 0 0',
           width: '100%',
-          maxWidth: 600,
-          maxHeight: '90vh',
+          maxWidth: '100%',
+          maxHeight: '95vh',
           overflowY: 'auto',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
         }}
+        className="sm:rounded-[14px] sm:max-w-[600px] sm:max-h-[90vh]"
       >
         {/* Header */}
         <div
@@ -701,9 +703,9 @@ function KanbanColumn({ column, tasks, users, onAddCard, onOpenCard }) {
   return (
     <div
       style={{
-        minWidth: 280,
+        minWidth: 260,
         maxWidth: 320,
-        flex: '1 1 280px',
+        flex: '1 1 260px',
         display: 'flex',
         flexDirection: 'column',
         background: '#0d1120',
@@ -765,10 +767,13 @@ function KanbanColumn({ column, tasks, users, onAddCard, onOpenCard }) {
             border: 'none',
             cursor: 'pointer',
             color: '#3a4a6b',
-            padding: 2,
+            padding: '8px',
             borderRadius: 6,
             display: 'flex',
             alignItems: 'center',
+            minWidth: 44,
+            minHeight: 44,
+            justifyContent: 'center',
           }}
           onMouseEnter={e => (e.currentTarget.style.color = column.color)}
           onMouseLeave={e => (e.currentTarget.style.color = '#3a4a6b')}
@@ -832,24 +837,28 @@ function AddCardModal({ defaultColumn, columns, users, onClose, onSave }) {
         inset: 0,
         background: 'rgba(0,0,0,0.7)',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: 16,
+        padding: 0,
       }}
+      className="sm:items-center sm:p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
         style={{
           background: '#0f1629',
           border: '1px solid #1c2440',
-          borderRadius: 14,
+          borderRadius: '14px 14px 0 0',
           width: '100%',
-          maxWidth: 480,
+          maxWidth: '100%',
           padding: 'clamp(16px, 4vw, 28px)',
           position: 'relative',
           boxSizing: 'border-box',
+          maxHeight: '95vh',
+          overflowY: 'auto',
         }}
+        className="sm:rounded-[14px] sm:max-w-[480px]"
       >
         {/* Close */}
         <button
@@ -862,6 +871,12 @@ function AddCardModal({ defaultColumn, columns, users, onClose, onSave }) {
             border: 'none',
             cursor: 'pointer',
             color: '#475569',
+            padding: 8,
+            minWidth: 44,
+            minHeight: 44,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <X size={18} />
@@ -1001,30 +1016,36 @@ function AddProjectModal({ onClose, onSave }) {
         inset: 0,
         background: 'rgba(0,0,0,0.7)',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: 16,
+        padding: 0,
       }}
+      className="sm:items-center sm:p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div
         style={{
           background: '#0f1629',
           border: '1px solid #1c2440',
-          borderRadius: 14,
+          borderRadius: '14px 14px 0 0',
           width: '100%',
-          maxWidth: 380,
+          maxWidth: '100%',
           padding: 'clamp(16px, 4vw, 28px)',
           position: 'relative',
           boxSizing: 'border-box',
+          maxHeight: '95vh',
+          overflowY: 'auto',
         }}
+        className="sm:rounded-[14px] sm:max-w-[380px]"
       >
         <button
           onClick={onClose}
           style={{
             position: 'absolute', top: 14, right: 14,
             background: 'none', border: 'none', cursor: 'pointer', color: '#475569',
+            padding: 8, minWidth: 44, minHeight: 44,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
           <X size={18} />
@@ -1096,10 +1117,11 @@ const primaryBtnStyle = {
   color: '#fff',
   border: 'none',
   borderRadius: 8,
-  padding: '8px 18px',
+  padding: '10px 18px',
   fontWeight: 700,
   fontSize: 14,
   cursor: 'pointer',
+  minHeight: 44,
 }
 
 const secondaryBtnStyle = {
@@ -1107,10 +1129,11 @@ const secondaryBtnStyle = {
   color: '#94a3b8',
   border: '1px solid #2a3558',
   borderRadius: 8,
-  padding: '8px 18px',
+  padding: '10px 18px',
   fontWeight: 600,
   fontSize: 14,
   cursor: 'pointer',
+  minHeight: 44,
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────

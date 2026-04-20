@@ -289,7 +289,7 @@ export default function ChatPage() {
                   setActiveChat({ chatId: chat.chatId, otherUser: chat.otherUser })
                   setMobileView('conversation')
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5 ${
+                className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-colors hover:bg-white/5 ${
                   activeChat?.chatId === chat.chatId ? 'bg-white/10' : ''
                 }`}
               >
@@ -437,7 +437,7 @@ export default function ChatPage() {
               <button
                 onClick={sendMessage}
                 disabled={!inputText.trim()}
-                className="flex-shrink-0 p-2.5 rounded-xl transition-colors disabled:opacity-40"
+                className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl transition-colors disabled:opacity-40"
                 style={{ background: '#3380ff' }}
                 title="Enviar"
               >
@@ -469,13 +469,13 @@ export default function ChatPage() {
       {/* ── New Chat Modal ── */}
       {showNewChat && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
           style={{ background: 'rgba(0,0,0,0.7)' }}
           onClick={() => setShowNewChat(false)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
-            style={{ background: '#0f1425', border: '1px solid #1c2440' }}
+            className="w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl"
+            style={{ background: '#0f1425', border: '1px solid #1c2440', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal header */}
@@ -510,7 +510,7 @@ export default function ChatPage() {
             </div>
 
             {/* User list */}
-            <div className="max-h-72 overflow-y-auto pb-2">
+            <div className="flex-1 overflow-y-auto pb-2" style={{ maxHeight: '60vh' }}>
               {filteredUsers.length === 0 ? (
                 <div className="flex flex-col items-center py-8 text-slate-500 text-sm gap-2">
                   <User size={24} />
@@ -521,7 +521,7 @@ export default function ChatPage() {
                   <button
                     key={u.id}
                     onClick={() => openChat(u)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-4 text-left hover:bg-white/5 transition-colors min-h-[56px]"
                   >
                     <Avatar
                       name={u.name || u.email}
