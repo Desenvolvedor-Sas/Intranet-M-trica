@@ -2,7 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/Intranet-M-trica/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Intranet Métrica</title>
     <script type="text/javascript">
@@ -18,13 +18,18 @@
       var pathSegmentsToKeep = 1; // Mantém /Intranet-M-trica/
       
       var l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      var pathname = l.pathname;
+      
+      // Verifica se já estamos na página correta (evita loop)
+      if (pathname.indexOf('/?/') === -1) {
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+          pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/~/g, ':').replace(/\u0026/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/\u0026/g, '~and~') : '') +
+          l.hash
+        );
+      }
     </script>
   </head>
   <body>
