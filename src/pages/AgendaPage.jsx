@@ -569,12 +569,12 @@ export default function AgendaPage() {
       )
     }
     return events // geral
-  }, [events, filterMode, compareUserId, currentUser])()
+  }, [events, filterMode, compareUserId, currentUser])
 
   // ── Events for a specific day ────────────────────────────────────────────────
   const eventsForDay = (day) => {
     const dateStr = format(day, 'yyyy-MM-dd')
-    return filteredEvents
+    return filteredEvents()
       .filter((e) => {
         const eStr = e.dateStr || (e.date?.toDate ? format(e.date.toDate(), 'yyyy-MM-dd') : null)
         return eStr === dateStr
