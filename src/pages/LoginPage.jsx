@@ -52,12 +52,18 @@ export default function LoginPage() {
         aria-hidden="true"
       >
         <defs>
-          <radialGradient id="glow1" cx="20%" cy="30%" r="50%">
-            <stop offset="0%" stopColor="#3380ff" stopOpacity="0.12" />
+          {/* Larger, more dramatic blue glows */}
+          <radialGradient id="glow1" cx="20%" cy="30%" r="60%">
+            <stop offset="0%" stopColor="#3380ff" stopOpacity="0.18" />
             <stop offset="100%" stopColor="#0a0e1a" stopOpacity="0" />
           </radialGradient>
-          <radialGradient id="glow2" cx="80%" cy="70%" r="45%">
-            <stop offset="0%" stopColor="#1a5ff5" stopOpacity="0.10" />
+          <radialGradient id="glow2" cx="80%" cy="70%" r="55%">
+            <stop offset="0%" stopColor="#1a5ff5" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#0a0e1a" stopOpacity="0" />
+          </radialGradient>
+          {/* Center gold accent glow */}
+          <radialGradient id="glow3" cx="50%" cy="38%" r="35%">
+            <stop offset="0%" stopColor="#E8A817" stopOpacity="0.07" />
             <stop offset="100%" stopColor="#0a0e1a" stopOpacity="0" />
           </radialGradient>
           <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -67,6 +73,7 @@ export default function LoginPage() {
         <rect width="100%" height="100%" fill="url(#grid)" />
         <rect width="100%" height="100%" fill="url(#glow1)" />
         <rect width="100%" height="100%" fill="url(#glow2)" />
+        <rect width="100%" height="100%" fill="url(#glow3)" />
 
         {/* Decorative geometric lines */}
         <line x1="0" y1="100%" x2="38%" y2="0" stroke="#3380ff" strokeOpacity="0.06" strokeWidth="1" />
@@ -91,7 +98,7 @@ export default function LoginPage() {
 
       {/* ── Card ── */}
       <div
-        className="relative z-10 w-full max-w-md mx-4"
+        className="relative z-10 w-full max-w-lg mx-4"
         style={{
           opacity: mounted ? 1 : 0,
           transform: mounted ? 'translateY(0)' : 'translateY(24px)',
@@ -100,9 +107,32 @@ export default function LoginPage() {
       >
         {/* Logo */}
         <div className="flex flex-col items-center mb-10">
-          {/* Company Logo Icon */}
-          <div className="mb-4">
-            <svg width="56" height="56" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+          {/* "Intranet Corporativa" badge */}
+          <div
+            className="mb-6 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
+            style={{
+              backgroundColor: 'rgba(232,168,23,0.10)',
+              border: '1px solid rgba(232,168,23,0.30)',
+              color: '#E8A817',
+              letterSpacing: '0.18em',
+            }}
+          >
+            Intranet Corporativa
+          </div>
+
+          {/* Company Logo Icon — gold glow backdrop + animated pulse */}
+          <div className="mb-5 relative flex items-center justify-center">
+            {/* Outer pulse ring */}
+            <span className="logo-pulse-outer absolute rounded-full" />
+            {/* Inner glow blob */}
+            <span className="logo-glow absolute rounded-full" />
+            <svg
+              className="relative z-10 sm:w-20 sm:h-20 w-16 h-16"
+              viewBox="0 0 40 44"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path d="M10 4C10 1.8 11.8 0 14 0H30C32.2 0 34 1.8 34 4V24C34 26.2 32.2 28 30 28H22L16 34V28H14C11.8 28 10 26.2 10 24V4Z" fill="#E8A817" />
               <path d="M15 9C15 7.9 15.9 7 17 7H27C28.1 7 29 7.9 29 9V19C29 20.1 28.1 21 27 21H22L18 25V21H17C15.9 21 15 20.1 15 19V9Z" fill="#0a0e1a" />
               <path d="M4 16C4 14.3 5.3 13 7 13H12V19H7C5.3 19 4 17.7 4 16Z" fill="#E8A817" />
@@ -113,7 +143,7 @@ export default function LoginPage() {
           </div>
 
           <h1
-            className="text-4xl font-bold tracking-widest"
+            className="text-4xl sm:text-5xl font-bold tracking-widest"
             style={{
               background: 'linear-gradient(135deg, #ffffff 40%, #E8A817 100%)',
               WebkitBackgroundClip: 'text',
@@ -166,7 +196,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="seu@email.com"
-                  className="w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none transition-all duration-200"
+                  className="w-full rounded-xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all duration-200"
                   style={{
                     backgroundColor: '#151b30',
                     border: '1px solid #1c2440',
@@ -202,7 +232,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl pl-11 pr-4 py-3 text-sm outline-none transition-all duration-200"
+                  className="w-full rounded-xl pl-11 pr-4 py-3.5 text-sm outline-none transition-all duration-200"
                   style={{
                     backgroundColor: '#151b30',
                     border: '1px solid #1c2440',
@@ -234,7 +264,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl py-3 text-sm font-semibold flex items-center justify-center gap-2 tracking-wide transition-all duration-200"
+              className="w-full rounded-xl py-3.5 text-base font-semibold flex items-center justify-center gap-2 tracking-wide transition-all duration-200"
               style={{
                 background: loading
                   ? 'linear-gradient(135deg, #2560cc, #1448c0)'
@@ -287,12 +317,39 @@ export default function LoginPage() {
         Intranet Métrica &copy; 2026
       </p>
 
-      {/* Outfit font */}
+      {/* Outfit font + logo animations */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
         input::placeholder { color: #2a3050; }
         .animate-spin { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Gold glow blob behind logo */
+        .logo-glow {
+          width: 96px;
+          height: 96px;
+          background: radial-gradient(circle, rgba(232,168,23,0.45) 0%, rgba(232,168,23,0) 70%);
+          filter: blur(12px);
+        }
+
+        /* Animated outer pulse ring */
+        .logo-pulse-outer {
+          width: 110px;
+          height: 110px;
+          border: 1.5px solid rgba(232,168,23,0.35);
+          animation: logoPulse 2.6s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+          0%   { transform: scale(0.92); opacity: 0.7; }
+          50%  { transform: scale(1.10); opacity: 0.25; }
+          100% { transform: scale(0.92); opacity: 0.7; }
+        }
+
+        @media (max-width: 640px) {
+          .logo-glow   { width: 76px; height: 76px; }
+          .logo-pulse-outer { width: 88px; height: 88px; }
+        }
       `}</style>
     </div>
   )

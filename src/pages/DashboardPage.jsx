@@ -12,7 +12,7 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isToday } from 'date-fns'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isToday, getISOWeek } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -38,6 +38,7 @@ const STATS = [
     border: 'rgba(51,128,255,0.25)',
     delta: 'Nenhum projeto',
     deltaUp: false,
+    progress: 0,
   },
   {
     label: 'Eventos Hoje',
@@ -49,6 +50,7 @@ const STATS = [
     border: 'rgba(34,197,94,0.25)',
     delta: 'Sem eventos',
     deltaUp: false,
+    progress: 0,
   },
   {
     label: 'Mensagens',
@@ -60,6 +62,7 @@ const STATS = [
     border: 'rgba(245,158,11,0.25)',
     delta: 'Nenhuma nova',
     deltaUp: false,
+    progress: 0,
   },
   {
     label: 'Tarefas Pendentes',
@@ -71,6 +74,7 @@ const STATS = [
     border: 'rgba(168,85,247,0.25)',
     delta: 'Tudo em dia',
     deltaUp: false,
+    progress: 0,
   },
 ]
 
@@ -107,6 +111,12 @@ const COMPLETION_PCT = 0
 function StatCard({ stat }) {
   const Icon = stat.icon
   const [hovered, setHovered] = useState(false)
+  const [progressAnimated, setProgressAnimated] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setProgressAnimated(true), 400)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <div
@@ -117,16 +127,29 @@ function StatCard({ stat }) {
         border: `1px solid ${hovered ? stat.border : '#1c2440'}`,
         borderRadius: '16px',
         padding: '20px',
+        paddingBottom: '0',
         cursor: 'default',
-        transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
+        transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
         boxShadow: hovered
-          ? `0 8px 32px ${stat.glow}, 0 0 0 1px ${stat.border}`
-          : '0 1px 4px rgba(0,0,0,0.3)',
-        transition: 'all 0.25s cubic-bezier(0.4,0,0.2,1)',
+          ? `0 12px 40px ${stat.glow}, 0 0 0 1px ${stat.border}`
+          : '0 2px 8px rgba(0,0,0,0.35)',
+        transition: 'all 0.28s cubic-bezier(0.4,0,0.2,1)',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
+      {/* Gradient overlay on hover */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `radial-gradient(ellipse at top left, ${stat.bg} 0%, transparent 70%)`,
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 0.28s ease',
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* Subtle gradient top-line accent */}
       <div
         style={{
@@ -136,11 +159,12 @@ function StatCard({ stat }) {
           right: 0,
           height: '2px',
           background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)`,
-          opacity: hovered ? 1 : 0,
-          transition: 'opacity 0.25s ease',
+          opacity: hovered ? 1 : 0.3,
+          transition: 'opacity 0.28s ease',
         }}
       />
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', position: 'relative', paddingBottom: '20px' }}>
         <div
           style={{
             width: 48,
@@ -151,23 +175,37 @@ function StatCard({ stat }) {
             alignItems: 'center',
             justifyContent: 'center',
             flexShrink: 0,
-            boxShadow: hovered ? `0 0 16px ${stat.glow}` : 'none',
-            transition: 'box-shadow 0.25s ease',
+            boxShadow: hovered ? `0 0 20px ${stat.glow}` : 'none',
+            transition: 'box-shadow 0.28s ease',
           }}
         >
           <Icon size={22} style={{ color: stat.color }} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <p style={{ color: '#6b7280', fontSize: '11px', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px 0' }}>
             {stat.label}
           </p>
-          <p style={{ color: '#fff', fontSize: '28px', fontWeight: 700, lineHeight: 1, letterSpacing: '-0.02em' }}>
+          <p style={{ color: '#fff', fontSize: '32px', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.03em', margin: '0 0 6px 0' }}>
             {stat.value}
           </p>
-          <p style={{ color: stat.deltaUp ? '#22c55e' : '#6b7280', fontSize: '11px', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <p style={{ color: stat.deltaUp ? '#22c55e' : '#6b7280', fontSize: '11px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
             {stat.delta}
           </p>
         </div>
+      </div>
+
+      {/* Animated progress bar at the bottom */}
+      <div style={{ height: '3px', backgroundColor: '#0a0e1a', borderRadius: '0 0 16px 16px', overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '100%',
+            width: progressAnimated ? `${stat.progress}%` : '0%',
+            background: `linear-gradient(90deg, ${stat.color}88, ${stat.color})`,
+            boxShadow: `0 0 8px ${stat.glow}`,
+            borderRadius: '0 0 16px 16px',
+            transition: 'width 1.2s cubic-bezier(0.4,0,0.2,1)',
+          }}
+        />
       </div>
     </div>
   )
@@ -323,6 +361,27 @@ function MiniCalendar() {
   const startDow = getDay(monthStart)
   const leadingBlanks = startDow === 0 ? 6 : startDow - 1
   const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+  const [hoveredDay, setHoveredDay] = useState(null)
+
+  // Build rows with week numbers
+  const totalCells = leadingBlanks + days.length
+  const totalRows = Math.ceil(totalCells / 7)
+
+  // Build an array of rows, each row is an array of 7 day-objects (or null for blanks)
+  const rows = []
+  for (let row = 0; row < totalRows; row++) {
+    const rowDays = []
+    for (let col = 0; col < 7; col++) {
+      const cellIndex = row * 7 + col
+      const dayIndex = cellIndex - leadingBlanks
+      if (dayIndex < 0 || dayIndex >= days.length) {
+        rowDays.push(null)
+      } else {
+        rowDays.push(days[dayIndex])
+      }
+    }
+    rows.push(rowDays)
+  }
 
   return (
     <div style={{ backgroundColor: '#151b30', border: '1px solid #1c2440', borderRadius: '16px', padding: '20px' }}>
@@ -333,8 +392,10 @@ function MiniCalendar() {
         </h2>
       </div>
 
-      {/* Weekday headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: '6px' }}>
+      {/* Weekday headers — with week-number column */}
+      <div style={{ display: 'grid', gridTemplateColumns: '20px repeat(7, 1fr)', marginBottom: '6px' }}>
+        {/* week-# column header */}
+        <div style={{ textAlign: 'center', color: '#2a3554', fontSize: '9px', fontWeight: 600, padding: '4px 0' }}>#</div>
         {weekDays.map((d) => (
           <div key={d} style={{ textAlign: 'center', color: '#4b5563', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', padding: '4px 0' }}>
             {d.charAt(0)}
@@ -342,39 +403,63 @@ function MiniCalendar() {
         ))}
       </div>
 
-      {/* Day grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px' }}>
-        {Array.from({ length: leadingBlanks }).map((_, i) => (
-          <div key={`b-${i}`} />
-        ))}
-        {days.map((day) => {
-          const dayNum = parseInt(format(day, 'd'), 10)
-          const todayDay = isToday(day)
-          const hasEvent = EVENT_DAYS.has(dayNum)
+      {/* Day rows with week numbers */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        {rows.map((rowDays, rowIndex) => {
+          // Find first non-null day in row to get week number
+          const firstReal = rowDays.find(Boolean)
+          const weekNum = firstReal ? getISOWeek(firstReal) : ''
           return (
-            <div
-              key={day.toISOString()}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '30px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: todayDay ? 700 : 400,
-                cursor: 'default',
-                backgroundColor: todayDay ? '#3380ff' : 'transparent',
-                color: todayDay ? '#fff' : '#6b7280',
-                boxShadow: todayDay ? '0 0 12px rgba(51,128,255,0.5)' : 'none',
-                position: 'relative',
-                gap: '1px',
-              }}
-            >
-              {format(day, 'd')}
-              {hasEvent && !todayDay && (
-                <div style={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#3380ff', position: 'absolute', bottom: 3 }} />
-              )}
+            <div key={rowIndex} style={{ display: 'grid', gridTemplateColumns: '20px repeat(7, 1fr)', gap: '2px', alignItems: 'center' }}>
+              {/* Week number */}
+              <div style={{ textAlign: 'center', color: '#2a3554', fontSize: '9px', fontWeight: 600, lineHeight: '30px' }}>
+                {weekNum}
+              </div>
+              {rowDays.map((day, colIndex) => {
+                if (!day) return <div key={`blank-${rowIndex}-${colIndex}`} />
+                const dayKey = day.toISOString()
+                const dayNum = parseInt(format(day, 'd'), 10)
+                const todayDay = isToday(day)
+                const hasEvent = EVENT_DAYS.has(dayNum)
+                const isHovered = hoveredDay === dayKey && !todayDay
+                return (
+                  <div
+                    key={dayKey}
+                    onMouseEnter={() => setHoveredDay(dayKey)}
+                    onMouseLeave={() => setHoveredDay(null)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: todayDay ? '34px' : '30px',
+                      width: todayDay ? '34px' : undefined,
+                      margin: todayDay ? 'auto' : undefined,
+                      borderRadius: '8px',
+                      fontSize: todayDay ? '12px' : '11px',
+                      fontWeight: todayDay ? 700 : isHovered ? 500 : 400,
+                      cursor: 'default',
+                      backgroundColor: todayDay
+                        ? '#3380ff'
+                        : isHovered
+                        ? 'rgba(51,128,255,0.12)'
+                        : 'transparent',
+                      color: todayDay ? '#fff' : isHovered ? '#a0bfff' : '#6b7280',
+                      boxShadow: todayDay
+                        ? '0 0 0 2px rgba(51,128,255,0.35), 0 0 16px rgba(51,128,255,0.5)'
+                        : 'none',
+                      transition: 'all 0.15s ease',
+                      position: 'relative',
+                      gap: '1px',
+                    }}
+                  >
+                    {format(day, 'd')}
+                    {hasEvent && !todayDay && (
+                      <div style={{ width: 3, height: 3, borderRadius: '50%', backgroundColor: '#3380ff', position: 'absolute', bottom: 3 }} />
+                    )}
+                  </div>
+                )
+              })}
             </div>
           )
         })}
@@ -385,18 +470,40 @@ function MiniCalendar() {
 
 function BarChart() {
   const [animated, setAnimated] = useState(false)
+  const [visibleBars, setVisibleBars] = useState([])
   const [tooltip, setTooltip] = useState(null)
   const todayIndex = new Date().getDay()
-  // 0=Sun,1=Mon…6=Sat → map to our array index Mon=0…Sun=6
   const currentBarIndex = todayIndex === 0 ? 6 : todayIndex - 1
+
+  const avgValue = BAR_DATA.reduce((s, b) => s + b.value, 0) / BAR_DATA.length
+  const avgPct = Math.round((avgValue / BAR_MAX) * 100)
 
   useEffect(() => {
     const t = setTimeout(() => setAnimated(true), 100)
     return () => clearTimeout(t)
   }, [])
 
+  // Stagger bar appearances
+  useEffect(() => {
+    if (!animated) return
+    BAR_DATA.forEach((_, i) => {
+      setTimeout(() => {
+        setVisibleBars((prev) => [...prev, i])
+      }, i * 100)
+    })
+  }, [animated])
+
   return (
-    <div style={{ backgroundColor: '#151b30', border: '1px solid #1c2440', borderRadius: '16px', padding: '20px', position: 'relative' }}>
+    <div
+      style={{
+        backgroundColor: '#151b30',
+        border: '1px solid #1c2440',
+        borderRadius: '16px',
+        padding: '20px',
+        position: 'relative',
+        boxShadow: 'inset 0 2px 12px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.35)',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h2 style={{ color: '#fff', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
           <TrendingUp size={14} style={{ color: '#3380ff' }} />
@@ -417,6 +524,20 @@ function BarChart() {
 
         {/* Chart area */}
         <div style={{ flex: 1, position: 'relative' }}>
+          {/* Gradient background behind chart area */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '100px',
+              borderRadius: '8px',
+              background: 'linear-gradient(180deg, rgba(51,128,255,0.06) 0%, rgba(51,128,255,0.01) 100%)',
+              pointerEvents: 'none',
+            }}
+          />
+
           {/* Grid lines */}
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '100px', pointerEvents: 'none' }}>
             {Y_TICKS.map((t) => (
@@ -427,17 +548,48 @@ function BarChart() {
                   left: 0,
                   right: 0,
                   bottom: `${(t / BAR_MAX) * 100}%`,
-                  borderTop: '1px solid rgba(255,255,255,0.04)',
+                  borderTop: '1px solid rgba(255,255,255,0.05)',
                 }}
               />
             ))}
           </div>
 
+          {/* Average dashed line */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: `${avgPct}%`,
+              height: '1px',
+              borderTop: '1px dashed rgba(51,128,255,0.4)',
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          >
+            <span
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '-9px',
+                fontSize: '9px',
+                color: 'rgba(51,128,255,0.7)',
+                fontWeight: 600,
+                backgroundColor: '#151b30',
+                padding: '0 3px',
+                letterSpacing: '0.02em',
+              }}
+            >
+              méd
+            </span>
+          </div>
+
           {/* Bars + labels */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '100px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', height: '100px' }}>
             {BAR_DATA.map((bar, i) => {
               const isActive = i === currentBarIndex
-              const heightPct = animated ? Math.round((bar.value / BAR_MAX) * 100) : 0
+              const barVisible = visibleBars.includes(i)
+              const heightPct = barVisible ? Math.round((bar.value / BAR_MAX) * 100) : 0
               return (
                 <div
                   key={bar.day}
@@ -449,7 +601,7 @@ function BarChart() {
                   {tooltip === i && (
                     <div style={{
                       position: 'absolute',
-                      bottom: `calc(${heightPct}% + 10px)`,
+                      bottom: `calc(${heightPct}% + 12px)`,
                       left: '50%',
                       transform: 'translateX(-50%)',
                       backgroundColor: '#0a0e1a',
@@ -467,26 +619,65 @@ function BarChart() {
                       <span style={{ color: '#6b7280' }}> tarefas</span>
                     </div>
                   )}
+
+                  {/* Value label on top */}
+                  {bar.value > 0 && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: `calc(${heightPct}% + 4px)`,
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        color: isActive ? '#60a5fa' : 'rgba(51,128,255,0.6)',
+                        opacity: barVisible ? 1 : 0,
+                        transition: 'opacity 0.3s ease',
+                        pointerEvents: 'none',
+                        lineHeight: 1,
+                      }}
+                    >
+                      {bar.value}
+                    </div>
+                  )}
+
+                  {/* Bar wrapper (relative for shine) */}
                   <div
                     style={{
                       width: '100%',
                       height: `${heightPct}%`,
-                      borderRadius: '6px 6px 3px 3px',
+                      borderRadius: '8px 8px 4px 4px',
+                      position: 'relative',
+                      overflow: 'hidden',
                       background: isActive
                         ? 'linear-gradient(180deg, #60a5fa 0%, #3380ff 100%)'
-                        : 'linear-gradient(180deg, rgba(51,128,255,0.5) 0%, rgba(51,128,255,0.2) 100%)',
-                      boxShadow: isActive ? '0 0 16px rgba(51,128,255,0.4)' : 'none',
-                      transition: 'height 0.7s cubic-bezier(0.4,0,0.2,1)',
+                        : 'linear-gradient(180deg, rgba(51,128,255,0.55) 0%, rgba(51,128,255,0.22) 100%)',
+                      boxShadow: isActive
+                        ? '0 0 20px rgba(51,128,255,0.5), 0 4px 12px rgba(51,128,255,0.3)'
+                        : 'none',
+                      transition: 'height 0.65s cubic-bezier(0.4,0,0.2,1)',
                       cursor: 'pointer',
                     }}
-                  />
+                  >
+                    {/* Shine highlight at top */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '35%',
+                        background: 'linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 100%)',
+                        borderRadius: '8px 8px 0 0',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  </div>
                 </div>
               )
             })}
           </div>
 
           {/* Day labels */}
-          <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+          <div style={{ display: 'flex', gap: '5px', marginTop: '8px' }}>
             {BAR_DATA.map((bar, i) => (
               <div key={bar.day} style={{ flex: 1, textAlign: 'center', color: i === currentBarIndex ? '#3380ff' : '#4b5563', fontSize: '10px', fontWeight: i === currentBarIndex ? 600 : 400 }}>
                 {bar.day}
@@ -499,17 +690,44 @@ function BarChart() {
   )
 }
 
+function useCountUp(target, duration = 1200, delay = 200) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    let start = null
+    let frame
+    const startTime = () => {
+      const step = (timestamp) => {
+        if (!start) start = timestamp
+        const progress = Math.min((timestamp - start) / duration, 1)
+        setCount(Math.round(progress * target))
+        if (progress < 1) frame = requestAnimationFrame(step)
+      }
+      frame = requestAnimationFrame(step)
+    }
+    const t = setTimeout(startTime, delay)
+    return () => {
+      clearTimeout(t)
+      cancelAnimationFrame(frame)
+    }
+  }, [target, duration, delay])
+  return count
+}
+
 function DonutChart() {
   const pct = COMPLETION_PCT
   const radius = 42
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (pct / 100) * circumference
   const [animated, setAnimated] = useState(false)
+  const countedPct = useCountUp(pct, 1400, 300)
 
   useEffect(() => {
     const t = setTimeout(() => setAnimated(true), 200)
     return () => clearTimeout(t)
   }, [])
+
+  // Scale marker ticks (every 25%)
+  const ticks = [0, 25, 50, 75, 100]
 
   return (
     <div style={{ backgroundColor: '#151b30', border: '1px solid #1c2440', borderRadius: '16px', padding: '20px' }}>
@@ -520,32 +738,83 @@ function DonutChart() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
         {/* Ring */}
         <div style={{ position: 'relative', flexShrink: 0 }}>
-          <svg width={104} height={104} style={{ transform: 'rotate(-90deg)' }}>
-            {/* Track */}
-            <circle cx={52} cy={52} r={radius} fill="none" stroke="#1c2440" strokeWidth={10} />
-            {/* Progress */}
-            <circle
-              cx={52}
-              cy={52}
-              r={radius}
-              fill="none"
-              stroke="url(#donutGrad)"
-              strokeWidth={10}
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={animated ? offset : circumference}
-              style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)' }}
-            />
+          <svg width={108} height={108} style={{ transform: 'rotate(-90deg)', overflow: 'visible' }}>
             <defs>
               <linearGradient id="donutGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#22c55e" />
                 <stop offset="100%" stopColor="#3380ff" />
               </linearGradient>
+              <linearGradient id="donutTrackGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="rgba(51,128,255,0.12)" />
+                <stop offset="100%" stopColor="rgba(34,197,94,0.06)" />
+              </linearGradient>
+              <filter id="donutGlow">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
             </defs>
+
+            {/* Gradient track ring (behind) */}
+            <circle cx={54} cy={54} r={radius} fill="none" stroke="url(#donutTrackGrad)" strokeWidth={14} />
+            {/* Main track */}
+            <circle cx={54} cy={54} r={radius} fill="none" stroke="#1c2440" strokeWidth={12} />
+
+            {/* Progress arc with glow */}
+            <circle
+              cx={54}
+              cy={54}
+              r={radius}
+              fill="none"
+              stroke="url(#donutGrad)"
+              strokeWidth={12}
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={animated ? offset : circumference}
+              filter={pct > 0 ? 'url(#donutGlow)' : undefined}
+              style={{ transition: 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)' }}
+            />
+
+            {/* Scale marker ticks */}
+            {ticks.map((tick) => {
+              const angle = (tick / 100) * 2 * Math.PI
+              const outerR = radius + 9
+              const innerR = radius + 5
+              const x1 = 54 + innerR * Math.cos(angle)
+              const y1 = 54 + innerR * Math.sin(angle)
+              const x2 = 54 + outerR * Math.cos(angle)
+              const y2 = 54 + outerR * Math.sin(angle)
+              return (
+                <line
+                  key={tick}
+                  x1={x1} y1={y1} x2={x2} y2={y2}
+                  stroke="rgba(255,255,255,0.15)"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                />
+              )
+            })}
           </svg>
+
+          {/* Pulsing glow ring (CSS animation via style tag) */}
+          {pct > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                inset: '-4px',
+                borderRadius: '50%',
+                border: '2px solid rgba(51,128,255,0.2)',
+                animation: 'donutPulse 2s ease-in-out infinite',
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+
           {/* Center label */}
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#fff', fontSize: '20px', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1 }}>{pct}%</span>
+            <span style={{ color: '#fff', fontSize: '22px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>{countedPct}%</span>
             <span style={{ color: '#6b7280', fontSize: '9px', marginTop: '2px' }}>completo</span>
           </div>
         </div>
@@ -630,6 +899,92 @@ function TeamPerformance() {
   )
 }
 
+function ResumoSemanal() {
+  const metrics = [
+    { label: 'Concluídas', value: 0, color: '#22c55e' },
+    { label: 'Em andamento', value: 0, color: '#3380ff' },
+    { label: 'Pendentes', value: 0, color: '#f59e0b' },
+  ]
+
+  return (
+    <div
+      style={{
+        backgroundColor: '#151b30',
+        border: '1px solid #1c2440',
+        borderRadius: '16px',
+        padding: '18px 20px',
+      }}
+    >
+      <h2
+        style={{
+          color: '#fff',
+          fontWeight: 600,
+          fontSize: '13px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          margin: '0 0 14px 0',
+        }}
+      >
+        <TrendingUp size={14} style={{ color: '#f59e0b' }} />
+        Resumo Semanal
+      </h2>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            style={{
+              flex: 1,
+              backgroundColor: 'rgba(255,255,255,0.02)',
+              border: `1px solid rgba(255,255,255,0.05)`,
+              borderRadius: '10px',
+              padding: '10px 8px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            {/* Colored dot */}
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: m.color,
+                boxShadow: `0 0 6px ${m.color}`,
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                color: '#fff',
+                fontSize: '18px',
+                fontWeight: 800,
+                lineHeight: 1,
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {m.value}
+            </span>
+            <span
+              style={{
+                color: '#4b5563',
+                fontSize: '10px',
+                fontWeight: 500,
+                textAlign: 'center',
+                lineHeight: 1.3,
+              }}
+            >
+              {m.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── main page ───────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
@@ -642,11 +997,27 @@ export default function DashboardPage() {
   )
 
   return (
-    <div style={{ minHeight: '100%', padding: '32px', backgroundColor: '#0a0e1a' }}>
+    <div className="p-4 md:p-6 lg:p-8" style={{ minHeight: '100%', backgroundColor: '#0a0e1a' }}>
+      {/* Keyframe styles injected once */}
+      <style>{`
+        @keyframes donutPulse {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.04); }
+        }
+        @media (min-width: 1024px) {
+          .dashboard-main-grid {
+            grid-template-columns: 1fr 1fr 1fr !important;
+          }
+          .dashboard-left-col {
+            grid-column: span 2;
+          }
+        }
+      `}</style>
+
       {/* Page header */}
       <div style={{ marginBottom: '32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-          <h1 style={{ color: '#fff', fontSize: '26px', fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
+          <h1 className="text-xl md:text-2xl lg:text-[26px]" style={{ color: '#fff', fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>
             {greeting}, {userName}
             <span style={{ color: '#3380ff' }}>.</span>
           </h1>
@@ -663,29 +1034,30 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         {STATS.map((s) => (
           <StatCard key={s.label} stat={s} />
         ))}
       </div>
 
       {/* Main grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+      <div className="dashboard-main-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
         {/* Left column — activity + bar chart */}
-        <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="dashboard-left-col" style={{ display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
           <ActivityFeed />
           <BarChart />
           {/* Donut + Team side by side */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
             <DonutChart />
             <TeamPerformance />
           </div>
         </div>
 
-        {/* Right column — quick access + calendar */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Right column — quick access + calendar + resumo semanal */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0 }}>
           <QuickAccess />
           <MiniCalendar />
+          <ResumoSemanal />
         </div>
       </div>
     </div>

@@ -245,7 +245,7 @@ function MessageBubble({ msg }) {
 
       {/* Bubble */}
       <div
-        className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
+        className={`max-w-[85%] sm:max-w-[75%] md:max-w-[70%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
           isUser
             ? 'rounded-br-sm text-white'
             : 'rounded-bl-sm text-gray-200'
@@ -389,7 +389,7 @@ export default function MetricaIAPage() {
     <div className="flex flex-col h-full" style={{ backgroundColor: '#0a0e1a' }}>
       {/* Header */}
       <div
-        className="flex items-center gap-3 px-6 py-4 border-b border-white/10 flex-shrink-0"
+        className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-white/10 flex-shrink-0"
         style={{ backgroundColor: '#0d1120' }}
       >
         <div
@@ -412,7 +412,7 @@ export default function MetricaIAPage() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-5">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-6 space-y-5">
         {messages.length === 0 ? (
           <WelcomeScreen onPrompt={(p) => sendMessage(p)} />
         ) : (
@@ -428,7 +428,7 @@ export default function MetricaIAPage() {
 
       {/* Input bar */}
       <div
-        className="flex-shrink-0 px-4 py-4 border-t border-white/10"
+        className="flex-shrink-0 px-3 sm:px-4 py-4 border-t border-white/10"
         style={{ backgroundColor: '#0d1120' }}
       >
         <div

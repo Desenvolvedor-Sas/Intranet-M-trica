@@ -742,7 +742,7 @@ export default function AgendaPage() {
 
         {/* ── Calendar ── */}
         <div
-          className="flex-1 rounded-2xl p-5"
+          className="flex-1 rounded-2xl p-4 sm:p-5"
           style={{ backgroundColor: '#151b30', border: '1px solid #1c2440', minWidth: 0 }}
         >
           {/* Month nav */}
@@ -776,7 +776,8 @@ export default function AgendaPage() {
           <div className="grid grid-cols-7 mb-2">
             {WEEKDAYS.map((d) => (
               <div key={d} className="text-center text-xs font-semibold py-1" style={{ color: '#8a9cc5' }}>
-                {d}
+                <span className="hidden sm:inline">{d}</span>
+                <span className="sm:hidden">{d.charAt(0)}</span>
               </div>
             ))}
           </div>
@@ -793,7 +794,7 @@ export default function AgendaPage() {
                 <button
                   key={day.toISOString()}
                   onClick={() => setSelectedDay(day)}
-                  className="relative flex flex-col items-center rounded-xl py-2 transition-all"
+                  className="relative flex flex-col items-center rounded-xl py-1 sm:py-2 transition-all"
                   style={{
                     backgroundColor: isSelected
                       ? '#3380ff'
@@ -815,7 +816,7 @@ export default function AgendaPage() {
                   }}
                 >
                   <span
-                    className="text-sm font-semibold leading-none"
+                    className="text-xs sm:text-sm font-semibold leading-none"
                     style={{ color: isSelected ? '#fff' : todayDay ? '#3380ff' : inMonth ? '#d0daf5' : '#4a5577' }}
                   >
                     {format(day, 'd')}
@@ -843,7 +844,7 @@ export default function AgendaPage() {
 
         {/* ── Day Events Panel ── */}
         <div
-          className="w-full lg:w-80 xl:w-96 rounded-2xl p-5 flex flex-col"
+          className="w-full lg:w-80 xl:w-96 rounded-2xl p-4 sm:p-5 flex flex-col"
           style={{ backgroundColor: '#151b30', border: '1px solid #1c2440', minWidth: 0 }}
         >
           {/* Panel header */}

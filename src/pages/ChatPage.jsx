@@ -235,7 +235,7 @@ export default function ChatPage() {
     >
       {/* ── Contacts sidebar ── */}
       <aside
-        className={`flex flex-col w-full md:w-80 lg:w-96 flex-shrink-0 border-r ${
+        className={`flex flex-col w-full md:w-80 lg:w-96 flex-shrink-0 border-r min-w-0 ${
           mobileView === 'conversation' ? 'hidden md:flex' : 'flex'
         }`}
         style={{ background: '#0f1425', borderColor: '#1c2440' }}
@@ -318,7 +318,7 @@ export default function ChatPage() {
 
       {/* ── Conversation panel ── */}
       <main
-        className={`flex-1 flex flex-col ${
+        className={`flex-1 flex flex-col min-w-0 ${
           mobileView === 'contacts' ? 'hidden md:flex' : 'flex'
         }`}
         style={{ background: '#0a0e1a' }}
@@ -363,7 +363,7 @@ export default function ChatPage() {
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-3">
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-slate-500 text-sm gap-2">
                   <MessageCircle size={32} />
@@ -389,7 +389,7 @@ export default function ChatPage() {
                       </div>
                     )}
                     <div
-                      className="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl text-sm leading-relaxed"
+                      className="max-w-[75%] sm:max-w-xs lg:max-w-md px-4 py-2 rounded-2xl text-sm leading-relaxed"
                       style={{
                         background: isSent ? '#3380ff' : '#1c2440',
                         color: '#fff',

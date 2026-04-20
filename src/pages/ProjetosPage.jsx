@@ -188,12 +188,13 @@ function CardDetailModal({ task, users, projectId, onClose, onDeleted }) {
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
+          boxSizing: 'border-box',
         }}
       >
         {/* Header */}
         <div
           style={{
-            padding: '20px 24px 16px',
+            padding: 'clamp(14px, 3vw, 20px) clamp(16px, 4vw, 24px) 16px',
             borderBottom: '1px solid #1c2440',
             display: 'flex',
             alignItems: 'flex-start',
@@ -239,7 +240,7 @@ function CardDetailModal({ task, users, projectId, onClose, onDeleted }) {
         </div>
 
         {/* Body */}
-        <div style={{ padding: '20px 24px', flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <div style={{ padding: 'clamp(14px, 3vw, 20px) clamp(16px, 4vw, 24px)', flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
 
           {/* Description */}
           <label style={labelStyle}>Descrição</label>
@@ -252,7 +253,7 @@ function CardDetailModal({ task, users, projectId, onClose, onDeleted }) {
           />
 
           {/* Row: Priority + Assignee */}
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>Prioridade</label>
               <select
@@ -281,7 +282,7 @@ function CardDetailModal({ task, users, projectId, onClose, onDeleted }) {
           </div>
 
           {/* Row: Due date + Column */}
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ flex: 1 }}>
               <label style={labelStyle}>Data de entrega</label>
               <input
@@ -845,8 +846,9 @@ function AddCardModal({ defaultColumn, columns, users, onClose, onSave }) {
           borderRadius: 14,
           width: '100%',
           maxWidth: 480,
-          padding: 28,
+          padding: 'clamp(16px, 4vw, 28px)',
           position: 'relative',
+          boxSizing: 'border-box',
         }}
       >
         {/* Close */}
@@ -889,7 +891,7 @@ function AddCardModal({ defaultColumn, columns, users, onClose, onSave }) {
         />
 
         {/* Row: Assignee + Priority */}
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>Responsável</label>
             <select
@@ -918,7 +920,7 @@ function AddCardModal({ defaultColumn, columns, users, onClose, onSave }) {
         </div>
 
         {/* Row: Due date + Column */}
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ flex: 1 }}>
             <label style={labelStyle}>Data de entrega</label>
             <input
@@ -1013,8 +1015,9 @@ function AddProjectModal({ onClose, onSave }) {
           borderRadius: 14,
           width: '100%',
           maxWidth: 380,
-          padding: 28,
+          padding: 'clamp(16px, 4vw, 28px)',
           position: 'relative',
+          boxSizing: 'border-box',
         }}
       >
         <button
@@ -1295,7 +1298,7 @@ export default function ProjetosPage() {
 
   // ── ── Render ──
   return (
-    <div style={{ background: '#0a0e1a', minHeight: '100vh', padding: '28px 24px' }}>
+    <div className="p-4 md:p-6 lg:p-8" style={{ background: '#0a0e1a', minHeight: '100vh' }}>
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1432,6 +1435,7 @@ export default function ProjetosPage() {
               alignItems: 'flex-start',
               overflowX: 'auto',
               paddingBottom: 16,
+              WebkitOverflowScrolling: 'touch',
             }}
           >
             {COLUMNS.map(col => (
